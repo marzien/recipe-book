@@ -31,6 +31,6 @@ export class DataStorageService {
       tap(recipes => {
         this.recipeService.setRecipes(recipes);
       })
-      )
+      );
   }
 }
