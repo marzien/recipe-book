@@ -5,13 +5,14 @@ import { throwError } from 'rxjs';
 
 const API_KEY = 'AIzaSyDQlXdV5GqjnIbFPGwb8XIpEVwhK3PS-nQ';
 
-interface AuthResponse {
+export interface AuthResponse {
   kind: string;
   idToken: string;
   email: string;
   refreshToken: string;
   expiresIn: string;
   localId: string;
+  registered?: boolean;
 }
 
 @Injectable({providedIn: 'root'})
@@ -37,5 +38,16 @@ export class AuthService {
       }
       return throwError(errorMessage);
     }));
+  }
+
+  login(email: string, password: string) {
+    return this.http.post<AuthResponse>(
+      `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`,
+    {
+      email,
+      password,
+      returnSecureToken: true
+    }
+    )
   }
 }
