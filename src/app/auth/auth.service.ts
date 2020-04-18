@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { catchError } from 'rxjs/operators';
+import { throwError } from 'rxjs';
 
 const API_KEY = 'AIzaSyDQlXdV5GqjnIbFPGwb8XIpEVwhK3PS-nQ';
 
@@ -24,6 +26,16 @@ export class AuthService {
       password,
       returnSecureToken: true
     }
-    );
+    ).pipe(catchError(errorRes => {
+      let errorMessage = 'An unknow error occured!';
+      if (!errorRes.error || !errorRes.error.error) {
+        return throwError(errorMessage);
+      }
+      switch (errorRes.error.error.message) {
+        case 'EMAIL_EXISTS':
+          errorMessage = 'This email exist already';
+      }
+      return throwError(errorMessage);
+    }));
   }
 }
